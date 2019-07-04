@@ -1,0 +1,22 @@
+### Public endpoint, Always succeed.
+GET http://0.0.0.0:8080/public
+
+### Authorization by token, Retrieve and save token.
+POST YOUR_AUTHENTICATION_ENDPOINT/oauth/token
+Content-Type: application/json
+
+{
+  "client_id": "YOUR_APPLICATION_CLIENT_ID",
+  "client_secret":"YOUR_APPLICATION_CLIENT_SECRET",
+  "audience":"YOUR_API_ENDPOINT",
+  "grant_type":"client_credentials"
+}
+
+> {%
+  client.global.set("access_token", response.body.access_token);
+  client.global.set("token_type", response.body.token_type);
+%}
+
+### Authorization by token, Private endpoint, Use token to authorize.
+GET http://0.0.0.0:8080/private
+Authorization: {{token_type}} {{access_token}}
