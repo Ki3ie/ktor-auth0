@@ -11,9 +11,11 @@ class ApplicationTest {
     @Test
     fun testRoot() {
         withTestApplication({ module() }) {
-            handleRequest(HttpMethod.Get, "/").apply {
+            handleRequest(HttpMethod.Get, "/public").apply {
                 assertEquals(HttpStatusCode.OK, response.status())
-                assertEquals("HELLO WORLD!", response.content)
+            }
+            handleRequest(HttpMethod.Get, "/private").apply {
+                assertEquals(HttpStatusCode.Unauthorized, response.status())
             }
         }
     }

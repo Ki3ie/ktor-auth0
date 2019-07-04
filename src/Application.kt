@@ -1,23 +1,44 @@
 package com.ki3ie
 
+import com.auth0.jwk.UrlJwkProvider
+import com.typesafe.config.ConfigFactory
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.auth.Authentication
-import io.ktor.http.ContentType
+import io.ktor.auth.authenticate
+import io.ktor.auth.jwt.jwt
 import io.ktor.response.respondText
+import io.ktor.routing.Routing
 import io.ktor.routing.get
-import io.ktor.routing.routing
+import io.ktor.server.netty.EngineMain
 
-fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
+fun main(args: Array<String>): Unit = EngineMain.main(args)
 
 fun Application.module() {
-    install(Authentication) {}
+    install(Authentication) {
+        jwt {
+            verifier(UrlJwkProvider(ConfigFactory.load().getString("auth0.issuer")))
+            validate { credential ->
+                val payload = credential.payload
+                if (payload.audience.contains(ConfigFactory.load().getString("auth0.audience"))) {
+                    CustomPayload(payload)
+                } else {
+                    null
+                }
+            }
+        }
+    }
 
-    routing {
-        get("/") {
-            call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
+    install(Routing) {
+        get("/public") {
+            call.respondText("Hello from a public endpoint! You don't need to be authenticated to see this.")
+        }
+
+        authenticate {
+            get("/private") {
+                call.respondText("Hello from a private endpoint! You need to be authenticated to see this.")
+            }
         }
     }
 }
-
