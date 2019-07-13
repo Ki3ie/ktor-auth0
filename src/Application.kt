@@ -18,6 +18,8 @@ fun main(args: Array<String>): Unit = EngineMain.main(args)
 fun Application.module() {
     install(Authentication) {
         jwt {
+            // Skip Authentication when deployment environment is dev
+            skipWhen { ConfigFactory.load().getString("ktor.deployment.environment") == "dev" }
             verifier(UrlJwkProvider(ConfigFactory.load().getString("auth0.issuer")))
             validate { credential ->
                 val payload = credential.payload
