@@ -20,7 +20,9 @@ fun Application.module() {
         jwt {
             // Skip Authentication when deployment environment is dev
             skipWhen { ConfigFactory.load().getString("ktor.deployment.environment") == "dev" }
+            // Get JSON Web Key from : "YOUR_AUTHENTICATION_ENDPOINT/.well-known/jwks.json"
             verifier(UrlJwkProvider(ConfigFactory.load().getString("auth0.issuer")))
+            // Function call every time Authentication is required on endpoint
             validate { credential ->
                 val payload = credential.payload
                 if (payload.audience.contains(ConfigFactory.load().getString("auth0.audience"))) {
