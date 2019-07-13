@@ -7,6 +7,7 @@ import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.auth.Authentication
 import io.ktor.auth.authenticate
+import io.ktor.auth.jwt.JWTPrincipal
 import io.ktor.auth.jwt.jwt
 import io.ktor.response.respond
 import io.ktor.routing.Routing
@@ -26,7 +27,7 @@ fun Application.module() {
             validate { credential ->
                 val payload = credential.payload
                 if (payload.audience.contains(ConfigFactory.load().getString("auth0.audience"))) {
-                    CustomPayload(payload)
+                    JWTPrincipal(payload)
                 } else {
                     null
                 }
