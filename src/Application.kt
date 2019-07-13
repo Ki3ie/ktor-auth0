@@ -19,6 +19,7 @@ fun main(args: Array<String>): Unit = EngineMain.main(args)
 fun Application.module() {
     install(Authentication) {
         jwt {
+            realm = "Ktor auth0"
             // Skip Authentication when deployment environment is dev
             skipWhen { ConfigFactory.load().getString("ktor.deployment.environment") == "dev" }
             // Get JSON Web Key from : "YOUR_AUTHENTICATION_ENDPOINT/.well-known/jwks.json"
@@ -43,6 +44,12 @@ fun Application.module() {
         authenticate {
             get("/private") {
                 call.respond("Hello from a private endpoint! You need to be authenticated to see this.")
+            }
+
+            get("/private-scoped") {
+                scope(CustomScope.READ_RULES) {
+                    call.respond("Hello from a private scoped endpoint! You need to be authenticated to see this.")
+                }
             }
         }
     }

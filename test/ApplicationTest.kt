@@ -17,6 +17,9 @@ class ApplicationTest {
             handleRequest(HttpMethod.Get, "/private").apply {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
             }
+            handleRequest(HttpMethod.Get, "/private-scoped").apply {
+                assertEquals(HttpStatusCode.Unauthorized, response.status())
+            }
         }
     }
 }

@@ -20,3 +20,7 @@ Content-Type: application/json
 ### Authorization by token, Private endpoint, Use token to authorize.
 GET http://0.0.0.0:8080/private
 Authorization: {{token_type}} {{access_token}}
+
+### Authorization by token, Private scoped endpoint, Use token to authorize but you need to have the permissions.
+GET http://0.0.0.0:8080/private-scoped
+Authorization: {{token_type}} {{access_token}}
